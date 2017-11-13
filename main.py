@@ -123,8 +123,6 @@ def build_tree(lista, llista):
 		if l[0] in saved:
 			if l[4] == '':
 				llista.pop(i)
-			#else:
-				#llista.pop(int(l[1]))
 			
 	
 	for item in lista:
