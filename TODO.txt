@@ -6,4 +6,5 @@ TODO:
 	~~ poprawić regex dla OID (usuwać  -- z np.: OBJECT-IDENTIFIER: --  "iso" = 1) ~~
 	~~ wjebać OIDy na drzewo (iso hardkodowane z wartością 1 - korzeń naszego drzewa) ~~
 	~~ wjebać object type'y na drzewo ~~
+	usunąć duplikaty object type'ów
 	zająć się nowymi typami danych (można regexem wycinać makra wcześniej)
