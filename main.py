@@ -98,10 +98,10 @@ def build_tree(lista, llista):
 	lista.insert(2, ('dod', 'org', 6))
 	lista.insert(3, ('internet', 'dod', 1))
 	
-	nodes.append(Node(("iso", None, 1), parent = None))
-	nodes.append(Node(("org", "iso", 3), parent = None))
-	nodes.append(Node(("dod", "org", 6), parent = None))
-	nodes.append(Node(("internet", "dod", 1), parent = None))
+	nodes.append(Node(("iso", None, 1, "oid", None, None, None, None), parent = None))
+	nodes.append(Node(("org", "iso", 3, "oid", None, None, None, None), parent = None))
+	nodes.append(Node(("dod", "org", 6, "oid", None, None, None, None), parent = None))
+	nodes.append(Node(("internet", "dod", 1, "oid", None, None, None, None), parent = None))
 	
 	
 	lista = list(set(lista))
@@ -110,9 +110,9 @@ def build_tree(lista, llista):
 	#pprint.pprint (llista)
 
 	#'internet' entry duplicates popping 
-	for i, item in enumerate(lista):
+	'''for i, item in enumerate(lista):
 		if item[0] == 'internet' and item[1] != 'dod':
-			lista.pop(i)
+			lista.pop(i)'''
 	
 	#remove duplicates from long-list
 	
@@ -128,16 +128,20 @@ def build_tree(lista, llista):
 	for item in lista:
 		if item[0] == 'iso' or item[0] == 'org' or item[0] == 'dod' or item[0] == 'internet':
 			continue
-		nodes.append(Node((item[0], item[1], item[2]), parent = None))
+		nodes.append(Node((item[0], item[1], item[2], "oid", None, None, None, None), parent = None))
+		
+	# 0 nazwa, 1 rodzic, 2 cyferka, 3 syntax (typ), 4 access (dostępność), 5 status (obowiązkowość), 6 opis
 		
 	for iitem in llista:
-		nodes.append(Node((iitem[0], iitem[6], iitem[7]), parent = None))
+		nodes.append(Node((iitem[0], iitem[6], iitem[7], iitem[1], iitem[2], iitem[3], iitem[4], iitem[5]), parent = None))
+		
+	nodes.sort(key=lambda n:int(n.name[2]))
 	
 	for n in nodes:
 		n.children = [x for x in nodes if x.name[1] == n.name[0]]
 	
 	for pre, _, node in RenderTree(nodes[0]):
-		print("%s%s" % (pre, node.name[0]))
+		print("%s(%s)%s - %s, %s, %s" % (pre, node.name[2], node.name[0], node.name[3], node.name[4], node.name[5]))
 
 		
 def main():
