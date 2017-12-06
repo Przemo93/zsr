@@ -1,5 +1,5 @@
 import collections, sys, re, pprint
-from anytree import Node, RenderTree, PreOrderIter
+from anytree import Node, RenderTree, PreOrderIter, LevelOrderIter
 	
 def loadFile(name):
 	with open( name ) as f:
@@ -66,7 +66,6 @@ def match_regexes(content, name, imported, type_matches_list, id_matches_list):
 	return type_matches_list, id_matches_list
 
 def clean_lists(types, ids):
-	
 	names_list = [x[0] for x in ids]
 	for n in names_list:
 		if n[0] == '-' and n[1] == '-':
@@ -88,7 +87,6 @@ def clean_lists(types, ids):
 	except:
 		pass
 		
-	
 	return types, ids
 	
 def build_tree(lista, llista):
@@ -98,11 +96,10 @@ def build_tree(lista, llista):
 	lista.insert(2, ('dod', 'org', 6))
 	lista.insert(3, ('internet', 'dod', 1))
 	
-	nodes.append(Node(("iso", None, 1, "oid", None, None, None, None), parent = None))
-	nodes.append(Node(("org", "iso", 3, "oid", None, None, None, None), parent = None))
-	nodes.append(Node(("dod", "org", 6, "oid", None, None, None, None), parent = None))
-	nodes.append(Node(("internet", "dod", 1, "oid", None, None, None, None), parent = None))
-	
+	nodes.append(Node(["iso", None, 1, "oid", None, None, None, None, '1'], parent = None))
+	nodes.append(Node(["org", "iso", 3, "oid", None, None, None, None, '0'], parent = None))
+	nodes.append(Node(["dod", "org", 6, "oid", None, None, None, None, '0'], parent = None))
+	nodes.append(Node(["internet", "dod", 1, "oid", None, None, None, None, '0'], parent = None))
 	
 	lista = list(set(lista))
 	llista = list(set(llista))
@@ -115,8 +112,6 @@ def build_tree(lista, llista):
 			lista.pop(i)'''
 	
 	#remove duplicates from long-list
-	
-	#TODO: sprawdzać, czy pozycja llista[0] się powtarza, i zostawiać wersję z opisem jeśli są dwie
 	saved = []
 	for i,l in enumerate(llista):
 		saved = l[0], i
@@ -128,37 +123,77 @@ def build_tree(lista, llista):
 	for item in lista:
 		if item[0] == 'iso' or item[0] == 'org' or item[0] == 'dod' or item[0] == 'internet':
 			continue
-		nodes.append(Node((item[0], item[1], item[2], "oid", None, None, None, None), parent = None))
+		nodes.append(Node([item[0], item[1], item[2], "oid", None, None, None, None, '0'], parent = None))
 		
-	# 0 nazwa, 1 rodzic, 2 cyferka, 3 syntax (typ), 4 access (dostępność), 5 status (obowiązkowość), 6 opis
+	# 0 nazwa, 1 rodzic, 2 cyferka, 3 syntax (typ), 4 access (dostępność), 5 status (obowiązkowość), 6 opis, 7 entry(rodzic), 8 path
 		
 	for iitem in llista:
-		nodes.append(Node((iitem[0], iitem[6], iitem[7], iitem[1], iitem[2], iitem[3], iitem[4], iitem[5]), parent = None))
-		
-	nodes.sort(key=lambda n:int(n.name[2]))
+		nodes.append(Node([iitem[0], iitem[6], iitem[7], iitem[1], iitem[2], iitem[3], iitem[4], iitem[5], '0'], parent = None))
 	
 	for n in nodes:
 		n.children = [x for x in nodes if x.name[1] == n.name[0]]
-	
-	for pre, _, node in RenderTree(nodes[0]):
-		print("%s(%s)%s - %s, %s, %s" % (pre, node.name[2], node.name[0], node.name[3], node.name[4], node.name[5]))
+		
+	#nodes.sort(key=lambda n:int(n.name[8]))
+		
+	#nodes = build_paths(nodes)
+		
+	return nodes
 
+def display_mib(name, tree):
+	al = ''
+	for s in name:
+		if s is '.':
+			continue
+		else:
+			al += s 
+	for n in tree:
+		if al == n.name[8] or al == n.name[0]:
+			print ("\nOBJECT-TYPE: {}\nSYNTAX: {}\nACCESS: {}\nSTATUS: {}\nDESCRIPTION: {}\nENTRY: {}\nNUMBER: {}\n\n".\
+			format(n.name[0],n.name[3],n.name[4],n.name[5],n.name[6],n.name[2],n.name[1],n.name[7]))
+			print (n)
+	
+		
+
+def build_paths(tree):
+	for n in LevelOrderIter(tree[0]):
+		if n.name[1] == None: #skip root of the tree
+			continue	
+		try:
+			n.name[8] = n.parent.name[8] + str(n.name[2])
+		except:
+			print (n)
+			print ("caused exception\n")
+			pass
+			
+	#tree.sort(key=lambda x: int(x.name[8]))
+	return tree
+
+def sortbypath(items):
+	return sorted(items, key=lambda item:int(item.name[8]))
+
+def print_tree(nodes):
+	#nodes.sort(key=lambda n:int(n.name[8]))
+	for pre, _, node in RenderTree(nodes[0], childiter=sortbypath):
+		#if(node.name[8][0]=='0'): #debug
+		print("%s(%s)%s - %s, %s, %s, %s" % (pre, node.name[2], node.name[0], node.name[3], node.name[4], node.name[5], node.name[8]))
 		
 def main():
-	#t = Tree()
 	imported = []
 	type_list = []
 	id_list = []
+	tree = []
 	arg_file_content = loadFile(sys.argv[1])
 	print("\n***\nPerforming task 1 - parsing files.\n***\n")
 	type_list, id_list = match_regexes(arg_file_content, sys.argv[1], imported, [], []) #zawartość pliku, nazwa pliku, lista importów
 	type_list, id_list = clean_lists(type_list, id_list)
 	print("\n***\nTask 1 completed successfully.\n***\n")
 	print("\n***\nPerforming task 2 - building binary tree.\n***\n")
-	build_tree(id_list, type_list)
+	tree = build_tree(id_list, type_list)
+	tree = build_paths(tree)
+	print_tree(tree)
 	print("\n***\nTask 2 completed successfully.\n***\n")
-	
-	#print (id_list)
+	mib_string = input("enter mib to display, e.x. 1.3.6.1.2.1 or egpNeighAs: ")
+	display_mib(mib_string, tree)
 		
 main()
 
