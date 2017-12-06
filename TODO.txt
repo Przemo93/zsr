@@ -10,4 +10,4 @@ task 1:
 	~~ ulepszyć wyświetlanie drzewa ~~
 	nowe typy danych
 task 2:
-	
+	~~ rozwiązać problem z pathem ~~
