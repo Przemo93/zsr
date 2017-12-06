@@ -1,4 +1,5 @@
 TODO:
+task 1:
 	~~ nazwa pliku do wczytania jako pierwszy parametr ~~
 	~~ zdebugować działanie regexa 2 ~~
 	~~ zapętlić matchAndClear ~~
@@ -7,5 +8,6 @@ TODO:
 	~~ wjebać OIDy na drzewo (iso hardkodowane z wartością 1 - korzeń naszego drzewa) ~~
 	~~ wjebać object type'y na drzewo ~~
 	~~ ulepszyć wyświetlanie drzewa ~~
-	ewentualnie poprawić oid i otype i wyrzucać programowo wszystko, co ma w sobie -- (i \n ?)
-	zająć się nowymi typami danych (można regexem wycinać makra wcześniej)
+	nowe typy danych
+task 2:
+	
