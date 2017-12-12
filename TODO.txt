@@ -11,3 +11,6 @@ task 1:
 	nowe typy danych
 task 2:
 	~~ rozwiązać problem z pathem ~~
+	sprawdzać poprawność wartości, którą podajemy dla danego liścia drzewa
+	wygenerowanie kodowania BER dla danej instancji typu
+	

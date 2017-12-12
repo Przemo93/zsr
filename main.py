@@ -148,9 +148,9 @@ def display_mib(name, tree):
 			al += s 
 	for n in tree:
 		if al == n.name[8] or al == n.name[0]:
-			print ("\nOBJECT-TYPE: {}\nSYNTAX: {}\nACCESS: {}\nSTATUS: {}\nDESCRIPTION: {}\nENTRY: {}\nNUMBER: {}\n\n".\
+			print ("\nOBJECT-TYPE: {}\nSYNTAX: {}\nACCESS: {}\nSTATUS: {}\nDESCRIPTION: {}\nNUMBER: {}\nENTRY: {}\n\n".\
 			format(n.name[0],n.name[3],n.name[4],n.name[5],n.name[6],n.name[2],n.name[1],n.name[7]))
-			print (n)
+			#print (n)
 	
 		
 
@@ -175,7 +175,7 @@ def print_tree(nodes):
 	#nodes.sort(key=lambda n:int(n.name[8]))
 	for pre, _, node in RenderTree(nodes[0], childiter=sortbypath):
 		#if(node.name[8][0]=='0'): #debug
-		print("%s(%s)%s - %s, %s, %s, %s" % (pre, node.name[2], node.name[0], node.name[3], node.name[4], node.name[5], node.name[8]))
+		print("%s(%s)%s - %s, %s, %s" % (pre, node.name[2], node.name[0], node.name[3], node.name[4], node.name[5]))
 		
 def main():
 	imported = []
@@ -192,8 +192,11 @@ def main():
 	tree = build_paths(tree)
 	print_tree(tree)
 	print("\n***\nTask 2 completed successfully.\n***\n")
-	mib_string = input("enter mib to display, e.x. 1.3.6.1.2.1 or egpNeighAs: ")
-	display_mib(mib_string, tree)
+	mib_string = ""
+	while mib_string != "q":
+		mib_string = input("enter mib to display, e.x. 1.3.6.1.2.1, 1361 or egpNeighAs, q to quit: ")
+		display_mib(mib_string, tree)
+		
 		
 main()
 
